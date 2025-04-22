@@ -31,10 +31,11 @@ module.exports = function(app, passport, db) {
     app.post('/messages', (req, res) => {
       db.collection('messages').save(
         {name: req.body.name, 
-          title: req.body.title, 
-          author: req.body.author, 
-          number: req.body.number, 
-          msg: req.body.msg,
+          item: req.body.item, 
+          price: req.body.price, 
+          type: req.body.type, 
+          date: req.body.date, 
+          // msg: req.body.msg,
           createdBy: req.user._id,
           // thumbUp: 0, 
           // thumbDown:0
