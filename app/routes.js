@@ -101,8 +101,10 @@ module.exports = function(app, passport, db) {
     // })
 
     app.delete('/messages', (req, res) => {
-      db.collection('messages').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {
-        if (err) return res.send(500, err)
+      console.log('DELETE request body:', req.body)
+      db.collection('messages').findOneAndDelete({name: req.body.name, item: req.body.item}, (err, result) => {
+        if (err) return res.status(500).send(err)
+        if (!result.value) return res.status(404).send('Message not found.')
         res.send('Message deleted!')
       })
     })
