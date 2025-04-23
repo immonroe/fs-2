@@ -9,14 +9,23 @@ module.exports = function(app, passport, db) {
 
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function(req, res) {
-        db.collection('messages').find({ createdBy: req.user._id }).toArray((err, result) => {
+      db.collection('messages').find({ createdBy: req.user._id }).toArray((err, result) => {
+        if (err) return console.log(err)
+    
+        const totalSpent = result.reduce((sum, msg) => sum + Number(msg.price || 0), 0)
+    
+        // Ran into bug where monthly budget was not live updating
+        db.collection('users').findOne({ _id: req.user._id }, (err, userDoc) => {
           if (err) return console.log(err)
+    
           res.render('profile.ejs', {
-            user : req.user,
-            messages: result
+            user: userDoc,
+            messages: result,
+            totalSpent: totalSpent
           })
         })
-    });
+      })
+    })    
 
     // LOGOUT ==============================
     app.get('/logout', function(req, res) {
@@ -46,35 +55,50 @@ module.exports = function(app, passport, db) {
       })
     })
 
-    app.put('/messages/upvote', (req, res) => {
-      db.collection('messages')
-      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
-        $set: {
-          thumbUp:req.body.thumbUp + 1
+    // creates the budget
+    app.post('/setBudget', isLoggedIn, (req, res) => {
+      const budget = Number(req.body.budget)
+    
+      db.collection('users').updateOne(
+        { _id: req.user._id },
+        { $set: { 'budget': budget } },
+        (err, result) => {
+          if (err) return console.log(err)
+          console.log(`Updated monthly budget to $${budget}`)
+          res.redirect('/profile')
         }
-      }, {
-        sort: {_id: -1},
-        upsert: true
-      }, (err, result) => {
-        if (err) return res.send(err)
-        res.send(result)
-      })
+      )
     })
 
-    app.put('/messages/downvote', (req, res) => {
-      db.collection('messages')
-      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
-        $set: {
-          thumbUp:req.body.thumbUp - 1
-        }
-      }, {
-        sort: {_id: -1},
-        upsert: true
-      }, (err, result) => {
-        if (err) return res.send(err)
-        res.send(result)
-      })
-    })
+    // app.put('/messages/upvote', (req, res) => {
+    //   db.collection('messages')
+    //   .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
+    //     $set: {
+    //       thumbUp:req.body.thumbUp + 1
+    //     }
+    //   }, {
+    //     sort: {_id: -1},
+    //     upsert: true
+    //   }, (err, result) => {
+    //     if (err) return res.send(err)
+    //     res.send(result)
+    //   })
+    // })
+
+    // app.put('/messages/downvote', (req, res) => {
+    //   db.collection('messages')
+    //   .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
+    //     $set: {
+    //       thumbUp:req.body.thumbUp - 1
+    //     }
+    //   }, {
+    //     sort: {_id: -1},
+    //     upsert: true
+    //   }, (err, result) => {
+    //     if (err) return res.send(err)
+    //     res.send(result)
+    //   })
+    // })
 
     app.delete('/messages', (req, res) => {
       db.collection('messages').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {

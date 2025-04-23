@@ -1,6 +1,4 @@
-/* style.css */
 
-/* Base styles */
 body {
   background-color: #121212;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -32,7 +30,6 @@ a:hover {
   color: #fff;
 }
 
-/* Budget Section */
 .budget-container {
   background-color: #1e1e1e;
   padding: 25px;
@@ -46,6 +43,17 @@ a:hover {
   color: #ffffff;
   font-size: 28px;
   margin-bottom: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
 }
 
 .budget-form input {
@@ -80,7 +88,6 @@ a:hover {
   margin: 10px 0;
 }
 
-/* Card-style containers */
 .card,
 .well {
   background-color: #1e1e1e;
@@ -99,7 +106,6 @@ a:hover {
   color: #f8f8f8;
 }
 
-/* Form spacing */
 form input,
 form button {
   width: 100%;
@@ -126,7 +132,6 @@ form button:hover {
   background-color: #0056b3;
 }
 
-/* Expense history */
 .messages {
   list-style: none;
   padding: 0;
@@ -155,7 +160,6 @@ form button:hover {
   margin-top: -20px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .page-header .btn {
     float: none;
