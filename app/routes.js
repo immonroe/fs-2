@@ -102,6 +102,7 @@ module.exports = function(app, passport, db) {
 
     app.delete('/messages', (req, res) => {
       console.log('DELETE request body:', req.body)
+      // Do I need to include all keys in delete request? Reference profile.ejs file for items
       db.collection('messages').findOneAndDelete({name: req.body.name, item: req.body.item}, (err, result) => {
         if (err) return res.status(500).send(err)
         if (!result.value) return res.status(404).send('Message not found.')
